@@ -53,24 +53,32 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        id: build-and-push
+      - name: Build Docker image
+        id: build
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           file: ./Dockerfile.${{ matrix.os }}
-          push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }}
 
-      - name: Verify image existence
-        run: docker images
-
-      - name: Add specific tags for ubuntu22
+      - name: Tag and push specific tags for ubuntu22
         if: matrix.os == 'ubuntu22'
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu22 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ubuntu22 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+
+      - name: Tag and push specific tag for ubuntu20
+        if: matrix.os == 'ubuntu20'
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }}
+
+      - name: Tag and push specific tag for ubuntu18
+        if: matrix.os == 'ubuntu18'
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.os }}
