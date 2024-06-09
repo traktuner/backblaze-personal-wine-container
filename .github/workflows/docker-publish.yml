@@ -6,13 +6,15 @@ on:
   schedule:  
     - cron: '23 4 */7 * *'  
   push:  
-    branches: [ main ]  
+    branches:  
+      - main  
     tags:  
       - v*  
     paths-ignore:  
       - README.md  
   pull_request:  
-    branches: [ main ]  
+    branches:  
+      - main  
   
 env:  
   REGISTRY: docker.io  
@@ -21,10 +23,18 @@ env:
 jobs:  
   build-and-push:  
     runs-on: ubuntu-latest  
+    strategy: matrix  
+    fast-finish: true  
+    matrix:  
+      file:  
+        - Dockerfile.ubuntu22  
+        - Dockerfile.ubuntu20  
+        - Dockerfile.ubuntu18  
     permissions:  
       contents: read  
       packages: write  
       id-token: write  
+  
     steps:  
       - name: Checkout repository  
         uses: actions/checkout@v2  
@@ -55,25 +65,9 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb3375089b4b5e9bcdc5dc  
         with:  
           context: .  
-          file: ${FILE}  
+          file: ${{ matrix.file }}  
           platforms: linux/amd64  
   
           # Special tagging for Ubuntu 22, 20, and 18  
-          tags: |{% if FILE == 'Dockerfile.ubuntu22' %}  
-            {{ steps.meta.outputs.tags }}  
-            {{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main  
-            {{ env.REGISTRY }}/${{ envIMAGE_NAME }}:latest  
-            {{ env.REGISTRY }}/${{ envIMAGE_NAME }}:v*{% if github.ref == 'refs/heads/main' %}:{% endif %}  
-          {% elsif FILE == 'Dockerfile.ubuntu20' %}  
-            {{ steps.meta.outputs.tags }}  
-            {{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main  
-            {{ env.REGISTRY }}/${{ envIMAGE_NAME }}:latest{% if github.ref != 'refs/heads/main' %}:{% endif %}  
-          {% elsif FILE == 'Dockerfile.ubuntu18' %}  
-            {{ steps.meta.outputs.tags }}  
-            {{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main  
-            {{ env.REGISTRY }}/${{ envIMAGE_NAME }}:v*{% if github.ref != 'refs/heads/main' %}:{% endif %}  
-          {% else %}  
-            {{ steps.meta.outputs.tags }}  
-          {% endif %}  
-  
-          labels: ${steps.meta.outputs.labels}  
+          tags: |{% if matrix.file == 'Dockerfile.ubuntu22' %}{{ steps.meta.outputs.tags }}{{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main{{ env.REGISTRY }}/${{ envIMAGE_NAME }}:latest{{ env.REGISTRY }}/${{ envIMAGE_NAME }}:v*{% if github.ref == 'refs/heads/main' %}:{% endif %}{% elsif matrix.file == 'Dockerfile.ubuntu20' %}{{ steps.meta.outputs.tags }}{{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main{{ env.REGISTRY }}/${{ envIMAGE_NAME }}:latest{% if github.ref != 'refs/heads/main' %}:{% endif %}{% elsif matrix.file == 'Dockerfile.ubuntu18' %}{{ steps.meta.outputs.tags }}{{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main{{ env.REGISTRY }}/${{ envIMAGE_NAME }}:v*{% if github.ref != 'refs/heads/main' %}:{% endif %}{% else %}{{ steps.meta.outputs.tags }}{% endif %}  
+          labels: ${steps.meta(outputs.labels)}  
