@@ -1,3 +1,4 @@
+# Use the Alpine base image with glibc support
 FROM jlesage/baseimage-gui:alpine-3.15-v4
 
 ENV WINEPREFIX /config/wine/
@@ -21,32 +22,21 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/main" > /etc/apk/repositor
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/community" >> /etc/apk/repositories
 
 # Install necessary packages
-RUN apk update && \  
-    echo "Running apk update" || true  
-  
-RUN apk add --no-cache curl
-
-# install winbind - included in samba package
-RUN apk add --no-cache samba
-RUN apk add --no-cache xvfb
-RUN apk add --no-cache wine
-RUN apk add --no-cache sudo
-RUN apk add --no-cache xorg-server
-RUN apk add --no-cache xvfb-run
-
-# Install winetricks manually
-RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks && \
-    chmod +x /usr/local/bin/winetricks
-
-# Install WINE Mono in an unattended mode
-RUN mkdir -p /usr/share/wine/mono && \
-    wget -O /usr/share/wine/mono/wine-mono.msi https://dl.winehq.org/wine/wine-mono/7.4.0/wine-mono-7.4.0-x86.msi
-
-# Run the wineprefix creation to initialize the environment
-RUN xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' wineboot --init
-
-# Install WINE Mono using xvfb-run
-RUN xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' wine msiexec /i /usr/share/wine/mono/wine-mono.msi /quiet /qn
+RUN apk update && \
+    apk add --no-cache \
+        curl \
+        samba \
+        xvfb \
+        wine \
+        sudo \
+        xorg-server \
+        xvfb-run && \
+    apk add --no-cache --virtual .build-deps \
+        wget \
+    && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
+    && chmod +x /usr/local/bin/winetricks \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/* 
 
 # Set up Backblaze
 COPY rootfs/ /
