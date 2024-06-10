@@ -1,3 +1,3 @@
-#!/bin/bash
-set -x
+#!/bin/sh
+
 sleep infinity
