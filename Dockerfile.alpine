@@ -30,6 +30,7 @@ RUN apk add --no-cache curl
 RUN apk add --no-cache samba
 RUN apk add --no-cache xvfb
 RUN apk add --no-cache wine
+RUN apk add --no-cache locales
 
 # Install winetricks manually
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks && \
