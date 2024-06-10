@@ -36,9 +36,9 @@ RUN apk update && \
     && rm -rf /var/cache/apk/* 
 
 # Set up Backblaze
-COPY rootfs/ /
+COPY startapp.sh /
 RUN chmod +x /startapp.sh
 
 EXPOSE 5900
 
-#CMD ["/startapp.sh"]
+CMD ["/startapp.sh"]
