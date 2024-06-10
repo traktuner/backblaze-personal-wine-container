@@ -25,7 +25,6 @@ RUN apk update && \
         xvfb \
         wine \
         sudo \
-        sed \
         grep \
     apk add --no-cache --virtual .build-deps \
         wget \
