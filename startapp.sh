@@ -1,3 +1,6 @@
 #!/bin/sh
 
-sleep infinity
+# Sleep indefinitely
+while true; do
+    sleep infinity
+done
