@@ -1,0 +1,47 @@
+FROM jlesage/baseimage-gui:alpine-3.15-v4
+
+ENV WINEPREFIX /config/wine/
+ENV LANG en_US.UTF-8
+ENV APP_NAME="Backblaze Personal Backup"
+ENV FORCE_LATEST_UPDATE="false"
+ENV DISABLE_AUTOUPDATE="false"
+ENV DISABLE_VIRTUAL_DESKTOP="false"
+ENV DISPLAY_WIDTH="900"
+ENV DISPLAY_HEIGHT="700"
+# Disable WINE Debug messages
+ENV WINEDEBUG -all
+# Set DISPLAY to allow GUI programs to be run
+ENV DISPLAY=:0
+
+# Install glibc
+RUN install-glibc
+
+# Install necessary packages
+RUN apk update && \
+    apk add --no-cache \
+        curl \
+        winbind \
+        xvfb \
+        wine \
+        winetricks \
+        sudo
+
+# Set up locales
+RUN \
+    add-pkg locales && \
+    sed-patch 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+ENV LANG=en_US.UTF-8
+
+# Install WINE Mono in an unattended mode
+RUN mkdir -p /usr/share/wine/mono && \
+    wget -O /usr/share/wine/mono/wine-mono.msi https://dl.winehq.org/wine/wine-mono/7.4.0/wine-mono-7.4.0-x86.msi && \
+    xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' wine msiexec /i /usr/share/wine/mono/wine-mono.msi /quiet /qn
+
+# Set up Backblaze
+COPY rootfs/ /
+RUN chmod +x /startapp.sh
+
+EXPOSE 5900
+
+CMD ["/startapp.sh"]
