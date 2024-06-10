@@ -30,20 +30,12 @@ RUN apk add --no-cache curl
 RUN apk add --no-cache samba
 RUN apk add --no-cache xvfb
 RUN apk add --no-cache wine
-RUN apk add --no-cache locales
 
 # Install winetricks manually
 RUN wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks && \
     chmod +x /usr/local/bin/winetricks
 
 RUN apk add --no-cache sudo
-
-# Set up locales
-RUN \
-    add-pkg locales && \
-    sed-patch 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen
-ENV LANG=en_US.UTF-8
 
 # Install WINE Mono in an unattended mode
 RUN mkdir -p /usr/share/wine/mono && \
