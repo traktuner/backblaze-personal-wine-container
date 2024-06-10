@@ -18,8 +18,8 @@ ENV DISPLAY=:0
 RUN install-glibc
 
 # Enable community repository to install necessary packages
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/main" > /etc/apk/repositories && \
-    echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/community" >> /etc/apk/repositories
+#RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.15/main" > /etc/apk/repositories && \
+#    echo "https://dl-cdn.alpinelinux.org/alpine/v3.15/community" >> /etc/apk/repositories
 
 # Install necessary packages
 RUN apk update && \
