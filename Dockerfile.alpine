@@ -25,7 +25,7 @@ RUN apk update && \
     echo "Running apk update" || true  
   
 RUN apk add --no-cache curl
-RUN apk add --no-cache winbind
+RUN apk add --no-cache samba
 RUN apk add --no-cache xvfb
 RUN apk add --no-cache wine
 RUN apk add --no-cache winetricks
