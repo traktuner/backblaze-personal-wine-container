@@ -21,14 +21,10 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/main" > /etc/apk/repositor
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/community" >> /etc/apk/repositories
 
 # Install necessary packages
-RUN apk update && \
-    apk add --no-cache \
-        curl \
-        winbind \
-        xvfb \
-        wine \
-        winetricks \
-        sudo
+RUN apk update && \  
+    echo "Running apk update" || true  
+  
+RUN apk add --no-cache curl winbind xvfb wine winetricks sudo || exit 1  
 
 # Set up locales
 RUN \
