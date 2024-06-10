@@ -16,6 +16,10 @@ ENV DISPLAY=:0
 # Install glibc
 RUN install-glibc
 
+# Enable community repository to install necessary packages
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/main" > /etc/apk/repositories && \
+    echo "https://dl-cdn.alpinelinux.org/alpine/v3.17/community" >> /etc/apk/repositories
+
 # Install necessary packages
 RUN apk update && \
     apk add --no-cache \
