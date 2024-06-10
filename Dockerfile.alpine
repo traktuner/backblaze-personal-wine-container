@@ -36,6 +36,7 @@ RUN apk update && \
 
 # Set up Backblaze
 COPY startapp.sh /
+COPY test.sh /
 RUN chmod +x /startapp.sh
 
 CMD ["/startapp.sh"]
