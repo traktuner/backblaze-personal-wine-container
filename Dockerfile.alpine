@@ -25,6 +25,9 @@ RUN apk update && \
         xvfb \
         wine \
         sudo \
+        grep \
+        sed \
+        gawk && \
     apk add --no-cache --virtual .build-deps \
         wget \
     && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
@@ -38,4 +41,4 @@ RUN chmod +x /startapp.sh
 
 EXPOSE 5900
 
-CMD ["/startapp.sh"]
+#CMD ["/startapp.sh"]
