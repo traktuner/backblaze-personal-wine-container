@@ -26,8 +26,6 @@ RUN apk update && \
         wine \
         sudo \
         sed \
-        gawk \
-        grep \
     apk add --no-cache --virtual .build-deps \
         wget \
     && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
