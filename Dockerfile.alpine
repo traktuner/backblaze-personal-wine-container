@@ -2,7 +2,6 @@
 FROM jlesage/baseimage-gui:alpine-3.15-v4
 
 ENV WINEPREFIX /config/wine/
-ENV LANG en_US.UTF-8
 ENV APP_NAME="Backblaze Personal Backup"
 ENV FORCE_LATEST_UPDATE="false"
 ENV DISABLE_AUTOUPDATE="false"
