@@ -38,6 +38,4 @@ RUN apk update && \
 COPY startapp.sh /
 RUN chmod +x /startapp.sh
 
-EXPOSE 5900
-
 CMD ["/startapp.sh"]
