@@ -15,6 +15,15 @@ pinned_bz_version_url=$(sed -n '2p' "$pinned_bz_version_file")
 export WINEARCH="win64"
 export WINEDLLOVERRIDES="mscoree=" # Disable Mono installation
 
+# Determine the Linux distribution
+if [ -f /etc/alpine-release ]; then
+    DISTRO="alpine"
+elif [ -f /etc/debian_version ]; then
+    DISTRO="debian"
+else
+    DISTRO=$(grep -i '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+fi
+
 log_message() {
     echo "$(date): $1" >> "$log_file"
 }
@@ -36,20 +45,22 @@ do
 done
 
 # Set Virtual Desktop
-if [ -f "${WINEPREFIX}drive_c/Program Files (x86)/Backblaze/bzbui.exe" ]; then
-    cd $WINEPREFIX
-    if [ "$DISABLE_VIRTUAL_DESKTOP" = "true" ]; then
-        log_message "WINE: DISABLE_VIRTUAL_DESKTOP=true - Virtual Desktop mode will be disabled"
-        winetricks vd=off
-    else
-        # Check if width and height are defined
-        if [ -n "$DISPLAY_WIDTH" ] && [ -n "$DISPLAY_HEIGHT" ]; then
-        log_message "WINE: Enabling Virtual Desktop mode with $DISPLAY_WIDTH:$DISPLAY_WIDTH aspect ratio"
-        winetricks vd="$DISPLAY_WIDTH"x"$DISPLAY_HEIGHT"
+if [ "$DISTRO" != "alpine" ]; then
+    if [ -f "${WINEPREFIX}drive_c/Program Files (x86)/Backblaze/bzbui.exe" ]; then
+        cd $WINEPREFIX
+        if [ "$DISABLE_VIRTUAL_DESKTOP" = "true" ]; then
+            log_message "WINE: DISABLE_VIRTUAL_DESKTOP=true - Virtual Desktop mode will be disabled"
+            winetricks vd=off
         else
-            # Default aspect ratio
-            log_message "WINE: Enabling Virtual Desktop mode with recommended aspect ratio"
-            winetricks vd="900x700"
+            # Check if width and height are defined
+            if [ -n "$DISPLAY_WIDTH" ] && [ -n "$DISPLAY_HEIGHT" ]; then
+                log_message "WINE: Enabling Virtual Desktop mode with $DISPLAY_WIDTH:$DISPLAY_HEIGHT aspect ratio"
+                winetricks vd="$DISPLAY_WIDTH"x"$DISPLAY_HEIGHT"
+            else
+                # Default aspect ratio
+                log_message "WINE: Enabling Virtual Desktop mode with recommended aspect ratio"
+                winetricks vd="900x700"
+            fi
         fi
     fi
 fi
