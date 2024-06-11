@@ -10,7 +10,7 @@ on:
     tags:
       - 'v*'
     paths-ignore:
-     - README.md
+      - README.md
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -28,16 +28,16 @@ jobs:
         include:
           - dockerfile: alpine
             tags: alpine
-#          - dockerfile: ubuntu22
-#            tags: |
-#              main
-#              latest
-#              ubuntu22
-#              ${{ github.ref_name }}
-#          - dockerfile: ubuntu20
-#            tags: ubuntu20
-#          - dockerfile: ubuntu18
-#            tags: ubuntu18
+          - dockerfile: ubuntu22
+            tags: |
+              main
+              latest
+              ubuntu22
+              ${{ github.ref_name }}
+          - dockerfile: ubuntu20
+            tags: ubuntu20
+          - dockerfile: ubuntu18
+            tags: ubuntu18
 
     steps:
       - name: Checkout repository
@@ -68,6 +68,15 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: ${{ matrix.tags }}
 
+      # Set up cache
+      - name: Setup Docker build cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -80,3 +89,5 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
