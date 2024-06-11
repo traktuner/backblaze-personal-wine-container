@@ -17,16 +17,15 @@ ENV DISPLAY=":0"
 RUN apk update && \
     apk add --no-cache \
         curl \
+        wine \
         samba \
         xvfb \
-        wine \
         dpkg \
-        wget && \
-    apk add --no-cache --virtual .build-deps \
-    && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
+    && apk add --no-cache --virtual .build-deps \
+    && curl -Lo /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
     && chmod +x /usr/local/bin/winetricks \
     && apk del .build-deps \
-    && rm -rf /var/cache/apk/* 
+    && rm -rf /var/cache/apk/*
 
 COPY rootfs/ /
 RUN chmod +x /startapp.sh
