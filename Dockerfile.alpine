@@ -11,7 +11,7 @@ ENV DISPLAY_HEIGHT="700"
 # Disable WINE Debug messages
 ENV WINEDEBUG="+heap+module+pid"
 # Set DISPLAY to allow GUI programs to be run
-ENV DISPLAY=":0"
+#ENV DISPLAY=":0"
 
 # Install glibc
 RUN install-glibc
