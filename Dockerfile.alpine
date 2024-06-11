@@ -1,5 +1,4 @@
-# Use the Alpine base image with glibc support
-FROM jlesage/baseimage-gui:alpine-3.19-v4
+FROM jlesage/baseimage-gui:alpine-3.19-v4@sha256:dfa0ac750d66f87286576da33e1bceab0f9cc3145f592b86166b5d83492daa44
 
 ENV WINEPREFIX="/config/wine/"
 ENV APP_NAME="Backblaze Personal Backup"
@@ -13,9 +12,6 @@ ENV WINEDEBUG="-all"
 # Set DISPLAY to allow GUI programs to be run
 ENV DISPLAY=":0"
 
-# Install glibc
-#RUN install-glibc
-
 # Install necessary packages
 # winbind is included in samba
 RUN apk update && \
@@ -24,11 +20,7 @@ RUN apk update && \
         samba \
         xvfb \
         wine \
-        sudo \
-        grep \
-        sed \
-        wget \
-        gawk && \
+        wget && \
     apk add --no-cache --virtual .build-deps \
     && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
     && chmod +x /usr/local/bin/winetricks \
