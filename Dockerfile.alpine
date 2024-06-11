@@ -1,6 +1,7 @@
 # Use the Alpine base image with glibc support
 FROM jlesage/baseimage-gui:alpine-3.19-v4
 
+ENV KEEP_APP_RUNNING=1
 ENV WINEPREFIX="/config/wine/"
 ENV APP_NAME="Backblaze Personal Backup"
 ENV FORCE_LATEST_UPDATE="false"

@@ -1,4 +1,3 @@
 #!/bin/sh
 
-wineboot -i
-winecfg
+wineserver -i &
