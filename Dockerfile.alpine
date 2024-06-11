@@ -1,7 +1,7 @@
 # Use the Alpine base image with glibc support
-FROM jlesage/baseimage-gui:alpine-3.15-v4
+FROM jlesage/baseimage-gui:alpine-3.19-v4
 
-ENV WINEPREFIX /config/wine/
+ENV WINEPREFIX="/config/wine/"
 ENV APP_NAME="Backblaze Personal Backup"
 ENV FORCE_LATEST_UPDATE="false"
 ENV DISABLE_AUTOUPDATE="false"
@@ -9,15 +9,32 @@ ENV DISABLE_VIRTUAL_DESKTOP="false"
 ENV DISPLAY_WIDTH="900"
 ENV DISPLAY_HEIGHT="700"
 # Disable WINE Debug messages
-ENV WINEDEBUG all
+ENV WINEDEBUG="+heap+module+pid"
 # Set DISPLAY to allow GUI programs to be run
-ENV DISPLAY=:0
+ENV DISPLAY=":0"
 
 # Install glibc
-#RUN install-glibc
+RUN install-glibc
 
 # Install necessary packages
+RUN apk update && \
+    apk add --no-cache \
+        curl \
+        samba \
+        xvfb \
+        wine \
+        sudo \
+        grep \
+        sed \
+        gawk && \
+    apk add --no-cache --virtual .build-deps \
+        wget \
+    && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
+    && chmod +x /usr/local/bin/winetricks \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/* 
 
+# Set up Backblaze
 COPY startapp.sh /
 COPY test.sh /
 RUN chmod +x /startapp.sh

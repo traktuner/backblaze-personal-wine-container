@@ -14,27 +14,10 @@ ENV WINEDEBUG all
 ENV DISPLAY=:0
 
 # Install glibc
-RUN install-glibc
+#RUN install-glibc
 
 # Install necessary packages
-RUN apk update && \
-    apk add --no-cache \
-        curl \
-        samba \
-        xvfb \
-        wine \
-        sudo \
-        grep \
-        sed \
-        gawk && \
-    apk add --no-cache --virtual .build-deps \
-        wget \
-    && wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/local/bin/winetricks \
-    && chmod +x /usr/local/bin/winetricks \
-    && apk del .build-deps \
-    && rm -rf /var/cache/apk/* 
 
-# Set up Backblaze
 COPY startapp.sh /
 COPY test.sh /
 RUN chmod +x /startapp.sh
