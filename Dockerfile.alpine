@@ -36,7 +36,5 @@ RUN apk update && \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/* 
 
-COPY startapp.sh /
-COPY test.sh /
+COPY rootfs/ /
 RUN chmod +x /startapp.sh
-RUN chmod +x /test.sh
