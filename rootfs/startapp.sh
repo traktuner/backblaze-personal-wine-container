@@ -82,11 +82,24 @@ fetch_and_install() {
     fi
     log_message "INSTALLER: Starting install_backblaze.exe"
     if [ -f "${WINEPREFIX}drive_c/Program Files (x86)/Backblaze/bzbui.exe" ]; then
-        WINEARCH="$WINEARCH" WINEPREFIX="$WINEPREFIX" wine64 "install_backblaze.exe" -nogui || handle_error "INSTALLER: Failed to install Backblaze"
+        WINEARCH="$WINEARCH" WINEPREFIX="$WINEPREFIX" wine64 "install_backblaze.exe" -nogui &
     else
-        WINEARCH="$WINEARCH" WINEPREFIX="$WINEPREFIX" wine64 "install_backblaze.exe" || handle_error "INSTALLER: Failed to install Backblaze"
+        WINEARCH="$WINEARCH" WINEPREFIX="$WINEPREFIX" wine64 "install_backblaze.exe" &
     fi
-
+    log_message "INSTALLER: Waiting for installer to finish"
+    # First wait for the installer to start
+    while [ "$(pgrep bzdoinstall)" = "" ]
+    do
+        sleep 1
+    done
+    # Now we wait for the bzgui to start
+    while [ "$(pgrep bzbui)" = "" ]
+    do
+        sleep 1
+    done
+    #Now that it's started we can wait 30 seconds, kill the installer and the bzbui, and force the container to restart
+    sleep 30
+    kill $(pgrep bzbui) $(pgrep bzdoinstall) $(pgrep install_backblaze)
 }
 
 start_app() {
