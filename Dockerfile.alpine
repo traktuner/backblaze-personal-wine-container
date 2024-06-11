@@ -15,7 +15,7 @@ ENV WINEDEBUG="+heap+module+pid"
 ENV DISPLAY=":0"
 
 # Install glibc
-#UN install-glibc
+#RUN install-glibc
 
 # Install necessary packages
 # winbind is included in samba
@@ -23,6 +23,7 @@ RUN apk update && \
     apk add --no-cache \
         curl \
         samba \
+        xvfb \
         wine \
         sudo \
         grep \
@@ -39,5 +40,3 @@ COPY startapp.sh /
 COPY test.sh /
 RUN chmod +x /startapp.sh
 RUN chmod +x /test.sh
-
-CMD ["/startapp.sh"]
