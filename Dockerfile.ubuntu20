@@ -1,4 +1,4 @@
-FROM jlesage/baseimage-gui:ubuntu-20.04-v4@sha256:7727052607e9b69eeb1bfce717effa1e3abf725b431118ff35226bc63a1c72e8
+FROM jlesage/baseimage-gui:ubuntu-20.04-v4@sha256:fe3e69749f05df0a1c1f2566051f548d3fbd05e1aad136fabae03dad864a8c7d
 
 ENV WINEPREFIX /config/wine/
 ENV LANG en_US.UTF-8
