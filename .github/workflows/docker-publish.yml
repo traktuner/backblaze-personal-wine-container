@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dockerfile: [alpine]
+        dockerfile: [alpine, ubuntu22, ubuntu20, ubuntu18]
         include:
           - dockerfile: alpine
             tags: alpine
