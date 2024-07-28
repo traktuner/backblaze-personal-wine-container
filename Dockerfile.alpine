@@ -1,25 +1,24 @@
-FROM jlesage/baseimage-gui:alpine-3.20-v4.6@sha256:261e82b16e446330236caa25248704e77197729542b19a560cde28e950ee8d1b
+FROM jlesage/baseimage-gui:alpine-3.20-v4.6.3@sha256:37c970f3aa3287e3dc3c5e8d5e273425b149eb44992c8ce658c83f767ae218a5
 
-ENV WINEPREFIX="/config/wine/"
+ENV WINEPREFIX /config/wine/
 ENV APP_NAME="Backblaze Personal Backup"
-ENV FORCE_LATEST_UPDATE="false"
-ENV DISABLE_AUTOUPDATE="false"
-ENV DISABLE_VIRTUAL_DESKTOP="false"
+ENV FORCE_LATEST_UPDATE="true"
+ENV DISABLE_AUTOUPDATE="true"
+ENV DISABLE_VIRTUAL_DESKTOP="true"
 ENV DISPLAY_WIDTH="900"
 ENV DISPLAY_HEIGHT="700"
 # Disable WINE Debug messages
-ENV WINEDEBUG="-all"
+ENV WINEDEBUG -all
 # Set DISPLAY to allow GUI programs to be run
-ENV DISPLAY=":0"
+ENV DISPLAY=:0
 
-# Install necessary packages
-# winbind is included in samba
 RUN apk update && \
     apk add --no-cache \
         curl \
-        wine \
+        wine=9.0-r0 \
         samba \
         xvfb \
+        dpkg \
         dpkg \
     && apk add --no-cache --virtual .build-deps \
     && curl -Lo /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
